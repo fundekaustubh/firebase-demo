@@ -1,12 +1,8 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase, ref, push, onValue, set, update, remove } from "firebase/database";
+import { getDatabase, ref, push, onValue, set, remove } from "firebase/database";
 import firebaseConfig from './firebase.config.js';
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const database = getDatabase(app);
 
 export const createUser = ({ user }) => {
