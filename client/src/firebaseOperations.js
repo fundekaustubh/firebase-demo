@@ -2,11 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getDatabase, ref, push, onValue, set, update, remove } from "firebase/database";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 import firebaseConfig from './firebase.config.js';
 
 // Initialize Firebase
@@ -19,10 +14,6 @@ export const createUser = ({ user }) => {
     const usersRef = ref(database, 'users');
     console.log("Created user!");
     return push(usersRef, user);
-}
-
-export const readUser = ({ userId }) => {
-
 }
 
 export const readUsers = (setUsers) => {
