@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import { createUser, readUser, readUsers, updateUser, deleteUser } from './firebaseOperations.js'
+import { createUser, readUsers, updateUser, deleteUser } from './firebaseOperations.js'
 import { useEffect, useRef, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,10 +19,6 @@ function App() {
   useEffect(() => {
     handleReadUsers();
   }, [])
-
-  // useEffect(() => {
-  //   console.log(users);
-  // }, [users]);
 
   const toggleOperation = (operationMode) => {
     console.log("Toggle called on: ", operation)
