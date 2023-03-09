@@ -5,34 +5,54 @@ import firebaseConfig from './firebase.config.js';
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-export const createUser = ({ user }) => {
-    console.log("Create user called!");
-    const usersRef = ref(database, 'users');
-    console.log("Created user!");
-    return push(usersRef, user);
+export const createProduct = ({ product }) => {
+    let productsRef = undefined;
+    if (product.category === 'Electronics') {
+        productsRef = ref(database, 'Electronics');
+    }
+    else {
+        productsRef = ref(database, 'Clothing');
+    }
+    return push(productsRef, product);
 }
 
-export const readUsers = (setUsers) => {
-    const usersRef = ref(database, 'users');
-    const users = [];
-    onValue(usersRef, (snapshot) => {
+export const readProducts = (setProducts) => {
+    let productsRef = ref(database, 'Electronics');
+    const products = [];
+    onValue(productsRef, (snapshot) => {
         snapshot.forEach((childSnapshot) => {
-            users.push({
+            products.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val(),
             });
         });
     });
-    setUsers(users);
+    productsRef = ref(database, 'Clothing');
+    onValue(productsRef, (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            products.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val(),
+            });
+        });
+    });
+    setProducts(products);
 }
 
-export const updateUser = ({ userId, user }) => {
-    console.log("Updated user is: ", user)
-    const userRef = ref(database, `users/${userId}`);
-    return set(userRef, { ...user, id: userId });
+export const updateProduct = ({ productId, product }) => {
+    let productRef = undefined;
+    if (product.category === 'Electronics') {
+        productRef = ref(database, `Electronics/${productId}`);
+    }
+    else {
+        productRef = ref(database, `Clothing/${productId}`);
+    }
+    return set(productRef, { ...product, id: productId });
 }
 
-export const deleteUser = ({ userId }) => {
-    const userRef = ref(database, `users/${userId}`);
-    return remove(userRef);
+export const deleteProduct = ({ productId }) => {
+    let productRef = ref(database, `Electronics/${productId}`);
+    remove(productRef)
+    productRef = ref(database, `Clothing/${productId}`);
+    return remove(productRef);
 }

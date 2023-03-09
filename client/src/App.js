@@ -1,5 +1,5 @@
 import './App.css';
-import { createUser, readUsers, updateUser, deleteUser } from './firebaseOperations.js'
+import { createProduct, readProducts, updateProduct, deleteProduct } from './firebaseOperations.js'
 import { useEffect, useRef, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,14 +10,14 @@ function App() {
     create: false,
     update: false
   })
-  const [users, setUsers] = useState([]);
-  const [updatedUserID, setUpdatedUserID] = useState(undefined);
+  const [products, setProducts] = useState([]);
+  const [updatedProductID, setUpdatedProductID] = useState(undefined);
 
-  const newUser = useRef('');
-  const updatedUser = useRef('');
+  const newProduct = useRef('');
+  const updatedProduct = useRef('');
 
   useEffect(() => {
-    handleReadUsers();
+    handleReadProducts();
   }, [])
 
   const toggleOperation = (operationMode) => {
@@ -25,7 +25,7 @@ function App() {
     switch (operationMode) {
       case 'create':
         if (!operation.create) {
-          newUser.current = '';
+          newProduct.current = '';
         }
         // setOperation({ ...operation, create: !operation.create });
         setOperation({ update: false, create: !operation.create });
@@ -33,7 +33,7 @@ function App() {
 
       case 'update':
         if (!operation.update) {
-          newUser.current = '';
+          newProduct.current = '';
         }
         // setOperation({ ...operation, update: !operation.update });
         setOperation({ create: false, update: !operation.update });
@@ -47,18 +47,18 @@ function App() {
     }
   }
 
-  const handleReadUsers = () => {
-    readUsers(setUsers);
+  const handleReadProducts = () => {
+    readProducts(setProducts);
   }
 
-  const handleCreateUser = () => {
+  const handleCreateProduct = () => {
     try {
       toggleOperation('create');
-      console.log(newUser.current.value)
-      const user = JSON.parse(`${newUser.current.value}`);
-      createUser({ user });
-      handleReadUsers();
-      toast("Created user!")
+      console.log(newProduct.current.value)
+      const product = JSON.parse(`${newProduct.current.value}`);
+      createProduct({ product });
+      handleReadProducts();
+      toast("Created product!")
       toggleOperation('create');
     }
     catch (err) {
@@ -67,35 +67,35 @@ function App() {
     }
   }
 
-  const handleDeleteUser = (userId) => {
-    if (!userId) {
-      toast("Error! Please select a valid user.");
+  const handleDeleteProduct = (productId) => {
+    if (!productId) {
+      toast("Error! Please select a valid product.");
       return;
     }
-    deleteUser({ userId });
-    toast("Deleted user!");
-    handleReadUsers();
+    deleteProduct({ productId });
+    toast("Deleted product!");
+    handleReadProducts();
   }
 
-  const handleRestorePreviousUserInfo = (e) => {
+  const handleRestorePreviousProductInfo = (e) => {
     e.preventDefault();
-    if (!updatedUserID) {
-      toast("Error! Please select a user to be updated.")
+    if (!updatedProductID) {
+      toast("Error! Please select a product to be updated.")
       return;
     }
-    const selectedUser = users.filter(user => user.id === updatedUserID)[0];
-    delete selectedUser.id;
-    updatedUser.current.value = JSON.stringify(selectedUser);
+    const selectedProduct = products.filter(product => product.id === updatedProductID)[0];
+    delete selectedProduct.id;
+    updatedProduct.current.value = JSON.stringify(selectedProduct);
   }
 
-  const handleUpdateUser = (user) => {
-    // updateUser({ userId, user });
+  const handleUpdateProduct = (product) => {
+    // updateProduct({ productId, product });
     try {
-      console.log("Updated user is: ", updatedUser)
-      updateUser({ userId: updatedUserID, user: JSON.parse(updatedUser.current.value) });
+      console.log("Updated product is: ", updatedProduct)
+      updateProduct({ productId: updatedProductID, product: JSON.parse(updatedProduct.current.value) });
       toggleOperation('update');
-      handleReadUsers();
-      toast("User updated!")
+      handleReadProducts();
+      toast("Product updated!")
     }
     catch (err) {
       toast("Error!");
@@ -125,51 +125,51 @@ function App() {
     <div className="App">
       {(operation.create || operation.update) &&
         <div>
-          {operation.create && <input type="text" ref={newUser} placeholder="Enter stringified user data." />}
-          {operation.update && <input type="text" ref={updatedUser} placeholder="Enter stringified user data." />}
+          {operation.create && <input type="text" ref={newProduct} placeholder="Enter stringified product data." />}
+          {operation.update && <input type="text" ref={updatedProduct} placeholder="Enter stringified product data." />}
           <button onClick={(e) => {
             if (operation.create) {
               toggleOperation('create');
             }
             if (operation.update) {
               toggleOperation('update');
-              setUpdatedUserID(undefined);
+              setUpdatedProductID(undefined);
             }
           }}>Cancel</button>
-          {operation.create && <button onClick={handleCreateUser}>Add</button>}
+          {operation.create && <button onClick={handleCreateProduct}>Add</button>}
           {operation.update &&
             <>
-              <button onClick={handleRestorePreviousUserInfo}>Restore user info</button>
-              <button onClick={handleUpdateUser}>Update</button>
+              <button onClick={handleRestorePreviousProductInfo}>Restore product info</button>
+              <button onClick={handleUpdateProduct}>Update</button>
             </>
           }
         </div>
       }
       <button onClick={(e) => toggleOperation('create')}>
-        Create user
+        Create product
       </button>
-      <button onClick={handleReadUsers}>
-        Read all users
+      <button onClick={handleReadProducts}>
+        Read all products
       </button>
       <ul>
-        {users.length > 0 && users.map(user => {
+        {products.length > 0 && products.map(product => {
           return (
             <li>
-              {Object.keys(user).map(key => {
-                if (typeof user[key] === 'object') {
-                  return getRecursiveSummary(key, user[key]);
+              {Object.keys(product).map(key => {
+                if (typeof product[key] === 'object') {
+                  return getRecursiveSummary(key, product[key]);
                 }
                 else {
-                  return <div>{key} : {user[key]}</div>
+                  return <div>{key} : {product[key]}</div>
                 }
               })}
               <button onClick={(e) => {
                 toggleOperation('update')
-                setUpdatedUserID(user.id)
-              }}>Update user</button>
+                setUpdatedProductID(product.id)
+              }}>Update product</button>
               <button onClick={(e) => {
-                handleDeleteUser(user.id)
-              }}>Delete user</button>
+                handleDeleteProduct(product.id)
+              }}>Delete product</button>
             </li>
           )
         })}
