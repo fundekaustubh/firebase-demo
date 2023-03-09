@@ -85,6 +85,7 @@ function App() {
     }
     const selectedProduct = products.filter(product => product.id === updatedProductID)[0];
     delete selectedProduct.id;
+    delete selectedProduct.category;
     updatedProduct.current.value = JSON.stringify(selectedProduct);
   }
 
